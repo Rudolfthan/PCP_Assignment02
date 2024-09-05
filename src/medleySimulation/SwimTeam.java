@@ -2,6 +2,8 @@
 //Class to represent a swim team - which has four swimmers
 package medleySimulation;
 
+import java.util.concurrent.CountDownLatch;
+
 import medleySimulation.Swimmer.SwimStroke;
 
 public class SwimTeam extends Thread {
@@ -26,17 +28,19 @@ public class SwimTeam extends Thread {
 			swimmers[s] = new Swimmer(i,teamNo,locArr[i],finish,speed,strokes[s]); //hardcoded speed for now
 		}
 	}
+
 	
 	
-	public void run() {
+	public synchronized void run() {
 		try {	
 			for(int s=0;s<sizeOfTeam; s++) { //start swimmer threads
 				swimmers[s].start();
 				
 			}
-			
+			//CountDownLatch latch = new CountDownLatch(sizeOfTeam); //wait for all swimmers to finish
+			//latch.await();	
 			for(int s=0;s<sizeOfTeam; s++) swimmers[s].join();			//don't really need to do this;
-			
+			//latch.countDown();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

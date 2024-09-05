@@ -9,13 +9,14 @@ public class StadiumGrid {
 	private final int x; //maximum x value
 	private final int y; //maximum y value
 	public  static int start_y; // where the starting blocks are 
-	
+	public GridBlock ini;
 	private GridBlock entrance; //hard coded entrance
-	
+	private GridBlock exit ; 
 	private GridBlock startingBlocks[]; //hard coded starting blocks
 	private final static int minX =5;//minimum x dimension
 	private final static int minY =5;//minimum y dimension
-	
+	private PeopleLocation myLocation;
+	private Swimmer s;
 	
 	StadiumGrid(int x, int y, int nTeams ,FinishCounter c) throws InterruptedException {
 		if (x<minX) x=minX; //minimum x
@@ -27,6 +28,7 @@ public class StadiumGrid {
 		startingBlocks= new GridBlock[nTeams];
 		this.initGrid();
 		entrance=Blocks[0][y-5];
+		
 		}
 	
 	//initialise the grid, creating all the GridBlocks, marking the starting blocks
@@ -61,27 +63,30 @@ public class StadiumGrid {
 	}
 	
 	//is this a valid grid reference?
-	public  boolean inStadiumArea(int i, int j) {
+	public synchronized boolean inStadiumArea(int i, int j) {
 		return inGrid(i,j);
 	}
 	
 	
 	//a person enters the stadium
-	public GridBlock enterStadium(PeopleLocation myLocation) throws InterruptedException  {
-				while((entrance.get(myLocation.getID()))) {} //wait at entrace until entrance is free - spinning, not good
-				myLocation.setLocation(entrance);
-				myLocation.setInStadium(true);
-				return entrance;
+	public synchronized GridBlock enterStadium(PeopleLocation myLocation) throws InterruptedException  {
+		//while((entrance.get(myLocation.getID()))) {} //wait at entrace until entrance is free - spinning, not good
+		myLocation.setLocation(entrance);
+		myLocation.setInStadium(true);
+		return entrance;
+
+		
+		
 			
 	}
 	
 	//returns starting block for a team (the lane)
-	public GridBlock returnStartingBlock(int team) {
+	public synchronized GridBlock returnStartingBlock(int team) {
 			return startingBlocks[team];
 	}
 	
 //Make a one block move in a direction
-	public GridBlock moveTowards(GridBlock currentBlock,int xDir, int yDir,PeopleLocation myLocation) throws InterruptedException {  //try to move in 
+	public  GridBlock moveTowards(GridBlock currentBlock,int xDir, int yDir,PeopleLocation myLocation) throws InterruptedException {  //try to move in 
 		
 		int c_x= currentBlock.getX();
 		int c_y= currentBlock.getY();
@@ -115,7 +120,7 @@ public class StadiumGrid {
 	} 
 	
 	//levitate to a specific block -
-public GridBlock jumpTo(GridBlock currentBlock,int x, int y,PeopleLocation myLocation) throws InterruptedException {  
+public  GridBlock jumpTo(GridBlock currentBlock,int x, int y,PeopleLocation myLocation) throws InterruptedException {  
 		//restrict i and j to grid
 		if (!inStadiumArea(x,y)) {
 			System.out.println("Invalid move");
@@ -135,12 +140,17 @@ public GridBlock jumpTo(GridBlock currentBlock,int x, int y,PeopleLocation myLoc
 	} 
 	
 //x and y actually correspond to the grid pos, but this is for generality.
-	public GridBlock whichBlock(int xPos, int yPos) {
+	public synchronized GridBlock whichBlock(int xPos, int yPos) {
 		if (inGrid(xPos,yPos)) {
 			return Blocks[xPos][yPos];
 		}
 		System.out.println("block " + xPos + " " +yPos + "  not found");
 		return null;
+	}
+
+	public synchronized Swimmer[] getSwimmers() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'getSwimmers'");
 	}
 }
 
