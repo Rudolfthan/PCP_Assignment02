@@ -4,45 +4,39 @@
 package medleySimulation;
 
 import java.awt.Color;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PeopleLocation  { // this is made a separate class so don't have to access thread
 	
-	public static final GridBlock Entrance = null;
 	private final int ID; //each person has an ID
 	private Color myColor; //colour of the person
 	
-	private AtomicBoolean inStadium; //are they here?
-	private AtomicBoolean  arrived; //have they arrived at the event?
+	private boolean inStadium; //are they here?
+	private boolean arrived; //have they arrived at the event?
 	private GridBlock location; //which GridBlock are they on?
 	
 	//constructor
 	PeopleLocation(int ID , Color c) {
-		// Random rand = new Random();
-		// float t = rand.nextFloat();
-		// myColor = new Color(t, rand.nextFloat(), t);
 		myColor = c;
-		inStadium = new AtomicBoolean(false); //not in pool
-		arrived = new AtomicBoolean(false); //have not arrived
+		inStadium = false; //not in pool
+		arrived = false; //have not arrived
 		this.ID=ID;
 	}
 	
 	//setter
 	public synchronized void setInStadium(boolean in) {
-		this.inStadium.set(in);
+		inStadium = in;
 	}
 	
 	//getter and setter
-	public synchronized boolean getArrived() {
-		return arrived.get();
+	public boolean getArrived() {
+		return arrived;
 	}
-	public synchronized void setArrived() {
-		arrived.set(true);
+	public void setArrived() {
+		arrived=true;
 	}
 
 //getter and setter
-	public synchronized GridBlock getLocation() {
+	public GridBlock getLocation() {
 		return location;
 	}
 	public synchronized void setLocation(GridBlock location) {
@@ -60,7 +54,7 @@ public class PeopleLocation  { // this is made a separate class so don't have to
 
 	//getter
 	public synchronized boolean inPool() {
-		return inStadium.get();
+		return inStadium;
 	}
 	//getter and setter
 	public synchronized Color getColor() { return myColor; }
