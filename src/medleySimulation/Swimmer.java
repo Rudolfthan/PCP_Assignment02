@@ -4,21 +4,18 @@
 package medleySimulation;
 
 import java.awt.Color;
-
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.BrokenBarrierException;
-
-
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Swimmer extends Thread {
 	
 	public static StadiumGrid stadium; //shared 
 	private FinishCounter finish; //shared
 	private AtomicInteger correctOrder;
-	private CyclicBarrier startBarrier;
+	private CyclicBarrier startBarrier; // barrier for them to wait
 	private CountDownLatch startingLatch; //shared
 	GridBlock currentBlock;
 	private Random rand;
@@ -152,11 +149,12 @@ public class Swimmer extends Thread {
 			myLocation.setArrived();
 				startingLatch.await();
 				enterStadium();
-			// not robust enought but works
+			
 			sleep((swimStroke.order - 1) * 750);
 
 			goToStartingBlocks();
 			try{
+
 				if (swimStroke.order == 1){
 					startBarrier.await();
 				}
@@ -177,7 +175,7 @@ public class Swimmer extends Thread {
 				finish.finishRace(ID, team); // fnishline
 			}
 			else {
-				//System.out.println("Thread "+this.ID + " done " + currentBlock.getX()  + " " +currentBlock.getY() );
+				
 				exitPool();//if not last swimmer leave pool
 			}
 		} catch (InterruptedException e1) {  //do nothing
